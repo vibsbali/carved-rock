@@ -9,7 +9,7 @@ public class ProductsController : Controller
     private readonly IProductLogic _productLogic;
     private readonly ILogger<ProductsController> _logger;
 
-    //public List<ProductModel> Products {get;set;}
+    //public List<ProductViewModel> Products {get;set;}
     public ProductsController(IProductLogic productLogic, ILogger<ProductsController> logger)
     {
         //Products = GetSampleProducts();
@@ -45,15 +45,15 @@ public class ProductsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(ProductModel product)
+    public async Task<IActionResult> Create(ProductViewModel productView)
     {
         if (ModelState.IsValid)
         {
-            await _productLogic.AddNewProduct(product);
+            await _productLogic.AddNewProduct(productView);
             return RedirectToAction(nameof(Index));
         }
 
-        return View(product.ToProduct());
+        return View(productView.ToProduct());
     }
 
     // GET: ProductsData/Edit/5
@@ -80,23 +80,23 @@ public class ProductsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, ProductModel product)
+    public async Task<IActionResult> Edit(int id, ProductViewModel productView)
     {
-        if (id != product.Id)
+        if (id != productView.Id)
         {
             _logger.LogInformation("Id mismatch in passed information. " +
                                    "Id value {id} did not match model value of {productId}",
-                id, product.Id);
+                id, productView.Id);
             return View("NotFound");
         }
 
         if (ModelState.IsValid)
         {
-            await _productLogic.UpdateProduct(product);
+            await _productLogic.UpdateProduct(productView);
             return RedirectToAction(nameof(Index));
         }
 
-        return View(product);
+        return View(productView);
     }
 
     // GET: ProductsData/Delete/5
@@ -127,17 +127,17 @@ public class ProductsController : Controller
         await _productLogic.RemoveProduct(id);
         return RedirectToAction(nameof(Index));
     }
-    // private List<ProductModel> GetSampleProducts()
+    // private List<ProductViewModel> GetSampleProducts()
     // {
-    //     return new List<ProductModel> 
+    //     return new List<ProductViewModel> 
     //     {
-    //         new ProductModel {Id = 1, Name = "Trailblazer", Price = 69.99M, IsActive = true,
+    //         new ProductViewModel {Id = 1, Name = "Trailblazer", Price = 69.99M, IsActive = true,
     //             Description = "Great support in this high-top to take you to great heights and trails." },
-    //         new ProductModel {Id = 2, Name = "Coastliner", Price = 49.99M, IsActive = true,
+    //         new ProductViewModel {Id = 2, Name = "Coastliner", Price = 49.99M, IsActive = true,
     //             Description = "Easy in and out with this lightweight but rugged shoe with great ventilation to get your around shores, beaches, and boats."},
-    //         new ProductModel {Id = 3, Name = "Woodsman", Price = 64.99M, IsActive = true,
+    //         new ProductViewModel {Id = 3, Name = "Woodsman", Price = 64.99M, IsActive = true,
     //             Description = "All the insulation and support you need when wandering the rugged trails of the woods and backcountry." },
-    //         new ProductModel {Id = 4, Name = "Basecamp", Price = 249.99M, IsActive = true,
+    //         new ProductViewModel {Id = 4, Name = "Basecamp", Price = 249.99M, IsActive = true,
     //             Description = "Great insulation and plenty of room for 2 in this spacious but highly-portable tent."},                            
     //     };
     // }

@@ -15,12 +15,14 @@ public class CarvedRockRepository : ICarvedRockRepository
     public async Task<List<Product>> GetAllProductsAsync()
     {
         return await _context.Products
+            .Include(p => p.Category)
             .ToListAsync();
     }
 
     public async Task<Product?> GetProductByIdAsync(int productId)
     {
         return await _context.Products
+            .Include(p => p.Category)
             .FirstOrDefaultAsync(m => m.Id == productId);
     }
 

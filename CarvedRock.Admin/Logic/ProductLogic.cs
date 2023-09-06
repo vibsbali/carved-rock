@@ -12,31 +12,31 @@ public class ProductLogic : IProductLogic
         _repo = repo;
     }
 
-    public async Task<List<ProductModel>> GetAllProducts()
+    public async Task<List<ProductViewModel>> GetAllProducts()
     {
         var products = await _repo.GetAllProductsAsync();
 
-        // converts products from DB to product models
-        return products.Select(ProductModel.FromProduct).ToList();
+        // converts products from DB to productView models
+        return products.Select(ProductViewModel.FromProduct).ToList();
 
         // the above is more terse syntax for:
-        //var models = new List<ProductModel>();
-        //foreach (var product in products)
+        //var models = new List<ProductViewModel>();
+        //foreach (var productView in products)
         //{
-        //    models.Add(ProductModel.FromProduct(product));
+        //    models.Add(ProductViewModel.FromProduct(productView));
         //}
         //return models;
     }
 
-    public async Task<ProductModel?> GetProductById(int id)
+    public async Task<ProductViewModel?> GetProductById(int id)
     {
         var product = await _repo.GetProductByIdAsync(id);
-        return product == null ? null : ProductModel.FromProduct(product);
+        return product == null ? null : ProductViewModel.FromProduct(product);
     }
 
-    public async Task AddNewProduct(ProductModel productToAdd)
+    public async Task AddNewProduct(ProductViewModel productViewToAdd)
     {
-        var productToSave = productToAdd.ToProduct();
+        var productToSave = productViewToAdd.ToProduct();
         await _repo.AddProductAsync(productToSave);
     }
 
@@ -45,9 +45,9 @@ public class ProductLogic : IProductLogic
         await _repo.RemoveProductAsync(id);
     }
 
-    public async Task UpdateProduct(ProductModel productToUpdate)
+    public async Task UpdateProduct(ProductViewModel productViewToUpdate)
     {
-        var productToSave = productToUpdate.ToProduct();
+        var productToSave = productViewToUpdate.ToProduct();
         await _repo.UpdateProductAsync(productToSave);
     }
 }
