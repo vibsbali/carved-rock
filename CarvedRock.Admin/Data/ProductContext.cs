@@ -6,13 +6,14 @@ namespace CarvedRock.Admin.Data;
 public class ProductContext : DbContext
 {
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<Category> Categories => Set<Category>();
 
     public string DbPath {get; set;}
 
-    public ProductContext()
+    public ProductContext(IConfiguration config)
     {
         var path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        DbPath = Path.Join(path, "carved-rock.db");
+        DbPath = Path.Join(path, config.GetConnectionString("ProductDbFilename"));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -25,6 +26,14 @@ public class ProductContext : DbContext
             Products.RemoveRange(Products);
             SaveChanges();
         }
+        if (Categories.Any())
+        {
+            Categories.RemoveRange(Categories);
+            SaveChanges();
+        }
+
+        var footwear = new Category { Id = 1000, Name = "Footwear" };
+        var equipment = new Category { Id = 2000, Name = "Equipment" };
 
         Products.Add(new Product
         {
@@ -32,7 +41,8 @@ public class ProductContext : DbContext
             Name = "Trailblazer",
             Price = 69.99M,
             IsActive = true,
-            Description = "Great support in this high-top to take you to great heights and trails."
+            Description = "Great support in this high-top to take you to great heights and trails.",
+            Category = footwear
         });
         Products.Add(new Product
         {
@@ -41,7 +51,8 @@ public class ProductContext : DbContext
             Price = 49.99M,
             IsActive = true,
             Description =
-                "Easy in and out with this lightweight but rugged shoe with great ventilation to get your around shores, beaches, and boats."
+                "Easy in and out with this lightweight but rugged shoe with great ventilation to get your around shores, beaches, and boats.",
+            Category = footwear
         });
         Products.Add(new Product
         {
@@ -50,7 +61,8 @@ public class ProductContext : DbContext
             Price = 64.99M,
             IsActive = true,
             Description =
-                "All the insulation and support you need when wandering the rugged trails of the woods and backcountry."
+                "All the insulation and support you need when wandering the rugged trails of the woods and backcountry.",
+            Category = footwear
         });
         Products.Add(new Product
         {
@@ -58,8 +70,12 @@ public class ProductContext : DbContext
             Name = "Basecamp",
             Price = 249.99M,
             IsActive = true,
-            Description = "Great insulation and plenty of room for 2 in this spacious but highly-portable tent."
+            Description = "Great insulation and plenty of room for 2 in this spacious but highly-portable tent.",
+            Category = equipment
         });
+
+        Categories.Add(footwear);
+        Categories.Add(equipment);
 
         SaveChanges();
     }
